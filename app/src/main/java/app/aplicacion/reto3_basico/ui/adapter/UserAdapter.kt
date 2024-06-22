@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import app.aplicacion.reto3_basico.R
 import app.aplicacion.reto3_basico.data.model.User
 
-class UserAdapter:RecyclerView.Adapter<UserViewHolder>() {
+class UserAdapter : RecyclerView.Adapter<UserViewHolder>() {
 
-    private val user=object :DiffUtil.ItemCallback<User>(){
+    private val user = object : DiffUtil.ItemCallback<User>() {
         override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
             return oldItem.id == newItem.id
         }
@@ -20,16 +20,23 @@ class UserAdapter:RecyclerView.Adapter<UserViewHolder>() {
         }
 
     }
-    val diff=AsyncListDiffer(this,user)
+    val diff = AsyncListDiffer(this, user)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        return UserViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_recycler,parent,false))
+        return UserViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.item_recycler, parent, false)
+        )
     }
 
-    override fun getItemCount()=diff.currentList.size
+    override fun getItemCount() = diff.currentList.size
+    private var userSelected: ((User) -> Unit)? = null
+
+    fun setOnClickUserSelected(listener: ((User) -> Unit)?) {
+        userSelected = listener
+    }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.render(diff.currentList[position])
+        holder.render(diff.currentList[position],userSelected)
     }
 
 }

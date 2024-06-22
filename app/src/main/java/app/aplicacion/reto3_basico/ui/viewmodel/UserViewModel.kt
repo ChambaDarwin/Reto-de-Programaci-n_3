@@ -30,8 +30,15 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
         }
     }
-    fun mostrarImagen(estaVacio:Boolean){
-        listEmpty.value = estaVacio
+    fun deleteUser(user: User){
+        viewModelScope.launch {
+            repository.deleteUser(user)
+        }
+    }
+    fun  updateUser(user:User){
+        viewModelScope.launch {
+            repository.updateUser(user)
+        }
     }
 
 

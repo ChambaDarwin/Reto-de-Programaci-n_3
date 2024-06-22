@@ -7,23 +7,29 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import app.aplicacion.reto3_basico.R
 import app.aplicacion.reto3_basico.core.cambiarColor
 import app.aplicacion.reto3_basico.core.hideImage
 import app.aplicacion.reto3_basico.core.showImage
 import app.aplicacion.reto3_basico.core.toasT
+import app.aplicacion.reto3_basico.data.delete.DeleteUser
 import app.aplicacion.reto3_basico.data.model.User
 import app.aplicacion.reto3_basico.databinding.ActivityMainBinding
 import app.aplicacion.reto3_basico.ui.adapter.UserAdapter
 import app.aplicacion.reto3_basico.ui.viewmodel.UserViewModel
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var model: UserViewModel
-    private lateinit var cadapter:UserAdapter
+    private lateinit var cadapter: UserAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -33,70 +39,119 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnAddUser.setOnClickListener { addUser() }
         showAllUser()
-
-
+        deleteUser()
+        editUser()
     }
 
     private fun initRecycler() {
-        cadapter= UserAdapter()
+        cadapter = UserAdapter()
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter=cadapter
+            adapter = cadapter
             setHasFixedSize(true)
         }
     }
-    private fun showImage(lista:List<User>){
-        if(lista.isNullOrEmpty()){
+
+    private fun showImage(lista: List<User>) {
+        if (lista.isNullOrEmpty()) {
             binding.image.showImage()
             cambiarColor(R.color.noList)
 
-        }else{
+        } else {
             binding.image.hideImage()
         }
     }
 
-    private fun addUser(){
-        val dialog=Dialog(this)
+    private fun addUser(user: User? = null) {
+        val dialog = Dialog(this)
         dialog.setContentView(R.layout.add_dialog)
-        val name=dialog.findViewById<EditText>(R.id.name)
-        val lastName=dialog.findViewById<EditText>(R.id.lastName)
-        val nota=dialog.findViewById<EditText>(R.id.nota)
-        val add=dialog.findViewById<Button>(R.id.btnAddUserDialog)
-        add.setOnClickListener {
-            val nameAdd=name.text.toString()
-            val lastNameAdd=lastName.text.toString()
-            val noteAdd=nota.text.toString()
-            val isCorrect=validarCampos(nameAdd,lastNameAdd,noteAdd)
-            if(isCorrect){
-                val user=User(0,nameAdd,lastNameAdd,noteAdd.toFloat(),"")
-                model.insertUser(user)
-                toasT("Registro realizado con exito")
-            }else{
-                toasT("Error: campos requeridos")
+        val name = dialog.findViewById<EditText>(R.id.name)
+        val lastName = dialog.findViewById<EditText>(R.id.lastName)
+        val nota = dialog.findViewById<EditText>(R.id.nota)
+        val add = dialog.findViewById<Button>(R.id.btnAddUserDialog)
+        val title=dialog.findViewById<TextView>(R.id.title)
+
+        if (user == null) {
+            add.setOnClickListener {
+                val nameAdd = name.text.toString()
+                val lastNameAdd = lastName.text.toString()
+                val noteAdd = nota.text.toString()
+                val isCorrect = validarCampos(nameAdd, lastNameAdd, noteAdd)
+                if (isCorrect) {
+                    val userInsert = User(0, nameAdd, lastNameAdd, noteAdd.toFloat(), "")
+                    model.insertUser(userInsert)
+                    toasT("Registro realizado con exito")
+                    dialog.dismiss()
+                } else {
+                    toasT("Error: campos requeridos")
+                }
+            }
+        }else{
+            title.setText("Update User")
+            add.setText("Update")
+
+            add.setOnClickListener {
+                val nameAdd = name.text.toString()
+                val lastNameAdd = lastName.text.toString()
+                val noteAdd = nota.text.toString()
+                val isCorrect = validarCampos(nameAdd, lastNameAdd, noteAdd)
+                if (isCorrect) {
+                    val newUser = User(user.id, nameAdd, lastNameAdd, noteAdd.toFloat(), "")
+                    model.updateUser(newUser)
+                    toasT("Registro modificado con exito")
+                    dialog.dismiss()
+                } else {
+                    toasT("Error: campos requeridos")
+                }
             }
         }
+
         dialog.create()
         dialog.show()
 
     }
-    private  fun validarCampos(name:String,lastName:String,note:String):Boolean{
 
-        if(name.isNullOrEmpty() || lastName.isNullOrEmpty() || note.isNullOrEmpty()){
+    private fun validarCampos(name: String, lastName: String, note: String): Boolean {
+
+        if (name.isNullOrEmpty() || lastName.isNullOrEmpty() || note.isNullOrEmpty()) {
             return false
         }
         return true
 
     }
-    private fun showAllUser(){
+
+    private fun showAllUser() {
         model.allUser.observe(this, Observer {
             cadapter.diff.submitList(it)
             showImage(it)
         })
 
+    }
 
+    private fun deleteUser() {
+        val user = object : DeleteUser() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val objectUser = cadapter.diff.currentList[position]
+                model.deleteUser(objectUser)
+                Snackbar.make(binding.root, "registro eliminado con exito", Snackbar.LENGTH_LONG)
+                    .apply {
+                        setAction("deshacer") {
+                            model.insertUser(objectUser)
+                        }
+                    }.show()
+            }
 
+        }
+        ItemTouchHelper(user).apply {
+            attachToRecyclerView(binding.recycler)
+        }
+    }
 
-
+    private fun editUser() {
+        cadapter.setOnClickUserSelected {
+            addUser(it)
+        }
     }
 
 

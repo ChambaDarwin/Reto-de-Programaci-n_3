@@ -9,10 +9,13 @@ class UserViewHolder(view:View):RecyclerView.ViewHolder(view) {
 
     private val binding=ItemRecyclerBinding.bind(view)
 
-    fun render(user:User){
+    fun render(user:User,listener:((User)->Unit)?){
         binding.nombre.text=user.nombre
         binding.apellido.text=user.apellido
         binding.nota.text=user.nota.toString()
         binding.calificacion.text=user.calificacion
+        itemView.setOnClickListener {
+            listener?.invoke(user)
+        }
     }
 }
