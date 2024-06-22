@@ -24,6 +24,8 @@ class UserRepository(val dao: UserDao) {
 
     fun alumnosAprobados()=dao.mostrarAlumnosAprobados()
 
+    fun showAllStudents()=dao.mostrarTodosLosAlumnos()
+
 
 
 }

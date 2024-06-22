@@ -1,6 +1,7 @@
 package app.aplicacion.reto3_basico.data.model.database
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -30,6 +31,9 @@ interface UserDao {
 
     @Query("select * from userTable where nota=10.0")
     fun mostrarAlumnosMH():LiveData<List<User>>
+
+    @Query("select * from userTable ")
+   fun mostrarTodosLosAlumnos(): LiveData<List<User>>
 
 
 }
