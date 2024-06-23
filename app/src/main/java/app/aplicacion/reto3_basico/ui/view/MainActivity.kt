@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         deleteUser()
         editUser()
         setSupportActionBar(binding.toolBar)
+        cambiarColor(R.color.noList)
+        supportActionBar?.title="Reto_Programaciòn"
     }
 
     private fun initRecycler() {
@@ -185,10 +187,14 @@ class MainActivity : AppCompatActivity() {
 
                 boton.setOnClickListener {
                     val myNumber=numero.text.toString()
-                    val listaSize=cadapter.diff.currentList.size
                     if(!myNumber.isNullOrEmpty()){
                         model.buscarPorDni(myNumber.toInt()).observe(this, Observer {
-                            cadapter.diff.submitList(it)
+                            if(it.isNullOrEmpty()){
+                                toasT("el usuario con el id $myNumber no existe")
+                            }else{
+                                cadapter.diff.submitList(it)
+                            }
+
                         })
                         dialog.dismiss()
 
@@ -198,9 +204,24 @@ class MainActivity : AppCompatActivity() {
                 }
                 dialog.create()
                 dialog.show()
-
+            return true
 
             }
+
+            R.id.candidatoAMH->{
+                model.candidatosMh.observe(this, Observer {
+                    cadapter.diff.submitList(it)
+                })
+                return true
+            }
+
+            R.id.candidatoAMH->{
+                model.allUser.observe(this, Observer {
+                    cadapter.diff.submitList(it)
+                })
+                return true
+            }
+
         }
         return super.onOptionsItemSelected(item)
     }

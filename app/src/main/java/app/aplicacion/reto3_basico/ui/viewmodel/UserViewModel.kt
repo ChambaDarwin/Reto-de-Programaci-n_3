@@ -17,6 +17,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     val allUser :LiveData<List<User>>
     val alumnosSuspensos:LiveData<List<User>>
     val alumnosAprobados:LiveData<List<User>>
+    val candidatosMh:LiveData<List<User>>
 
 
     init {
@@ -25,7 +26,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         allUser=repository.showAllStudents()
         alumnosSuspensos=repository.alumnosSuspendos()
         alumnosAprobados=repository.alumnosAprobados()
-
+        candidatosMh=repository.candidatosAMH()
 
     }
     fun buscarPorDni(id:Int):LiveData<List<User>>{

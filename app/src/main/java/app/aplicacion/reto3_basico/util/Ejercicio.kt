@@ -31,6 +31,7 @@ package app.aplicacion.reto3_basico.util
 
       8. Mostrar candidatos a MH
         (los que tengan un 10 de nota)
+
       9. Modificar calificación:permite modificar la calificación
        calculada automáticamente,
 

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import app.aplicacion.reto3_basico.data.model.User
 import java.util.concurrent.locks.Lock
 
-@Database(entities = [User::class], version = 3, exportSchema = false)
+@Database(entities = [User::class], version = 4, exportSchema = false)
 abstract class UserDatabase:RoomDatabase()  {
 
     abstract fun getDao():UserDao

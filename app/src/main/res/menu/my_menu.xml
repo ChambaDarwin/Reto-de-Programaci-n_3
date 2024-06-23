@@ -14,4 +14,12 @@
         android:icon="@drawable/ic_adduser"
         android:title="Buscar por dni"
         />
+    <item android:id="@+id/candidatoAMH"
+        android:icon="@drawable/ic_adduser"
+        android:title="Candidatos a MH"
+        />
+    <item android:id="@+id/allUserMenu"
+        android:icon="@drawable/ic_adduser"
+        android:title="Mostrar todos los usuarios"
+        />
 </menu>
