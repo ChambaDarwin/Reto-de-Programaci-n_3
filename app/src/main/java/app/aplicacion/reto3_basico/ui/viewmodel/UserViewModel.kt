@@ -15,14 +15,24 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: UserRepository
 
     val allUser :LiveData<List<User>>
+    val alumnosSuspensos:LiveData<List<User>>
+    val alumnosAprobados:LiveData<List<User>>
+
+
     init {
         val dao = UserDatabase.invoke(application).getDao()
         repository = UserRepository(dao)
         allUser=repository.showAllStudents()
+        alumnosSuspensos=repository.alumnosSuspendos()
+        alumnosAprobados=repository.alumnosAprobados()
 
 
     }
-    val listEmpty=MutableLiveData<Boolean> ()
+    fun buscarPorDni(id:Int):LiveData<List<User>>{
+        return repository.consultarNotasconDni(id)
+    }
+
+
 
     fun insertUser(user: User) {
         viewModelScope.launch {

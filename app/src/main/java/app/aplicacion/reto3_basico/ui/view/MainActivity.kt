@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.icu.number.IntegerWidth
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -36,11 +38,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         model = ViewModelProvider(this).get(UserViewModel::class.java)
         initRecycler()
-
         binding.btnAddUser.setOnClickListener { addUser() }
         showAllUser()
         deleteUser()
         editUser()
+        setSupportActionBar(binding.toolBar)
     }
 
     private fun initRecycler() {
@@ -153,6 +155,57 @@ class MainActivity : AppCompatActivity() {
             addUser(it)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.my_menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+
+            R.id.alumnosSuspensos->{
+                model.alumnosSuspensos.observe(this, Observer {
+                    cadapter.diff.submitList(it)
+                })
+                return true
+            }
+            R.id.alumnosAprobados->{
+                model.alumnosAprobados.observe(this, Observer {
+                    cadapter.diff.submitList(it)
+                })
+                return true
+            }
+            R.id.buscarPorId->{
+                val dialog=Dialog(this)
+                dialog.setContentView(R.layout.search_dialog)
+                val numero=dialog.findViewById<EditText>(R.id.etBuscar)
+                val boton=dialog.findViewById<Button>(R.id.btnBuscar)
+
+
+                boton.setOnClickListener {
+                    val myNumber=numero.text.toString()
+                    val listaSize=cadapter.diff.currentList.size
+                    if(!myNumber.isNullOrEmpty()){
+                        model.buscarPorDni(myNumber.toInt()).observe(this, Observer {
+                            cadapter.diff.submitList(it)
+                        })
+                        dialog.dismiss()
+
+                    }else{
+                        toasT("ingresa un id valido")
+                    }
+                }
+                dialog.create()
+                dialog.show()
+
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
 
 
 }

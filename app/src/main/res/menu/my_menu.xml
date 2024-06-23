@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<item android:id="@+id/alumnosSuspensos"
+    android:icon="@drawable/ic_adduser"
+    android:title="Alumnos Suspensos"
+    />
+
+    <item android:id="@+id/alumnosAprobados"
+        android:icon="@drawable/ic_adduser"
+        android:title="Alumnos Aprobados"
+        />
+    <item android:id="@+id/buscarPorId"
+        android:icon="@drawable/ic_adduser"
+        android:title="Buscar por dni"
+        />
+</menu>
